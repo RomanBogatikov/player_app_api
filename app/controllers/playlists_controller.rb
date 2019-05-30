@@ -13,7 +13,17 @@ class PlaylistsController < ApplicationController
     # playlist = Playlist.find(params[:id])
 
     # render json: { status: 200, playlist: @playlist.to_json(include: :songs) }
-    render json: @playlist.to_json(include: :songs)
+    # puts "hello"
+
+    # render json: @playlist
+
+    puts "params=#{params[:id]}"
+    ledger = Ledger.where("playlist_id = #{params[:id]} AND song_id = 1");
+    playlist_this = { playlist: @playlist }.to_json
+    puts "playlist_this=#{playlist_this}"
+
+    puts "ledger=#{ledger[0].id}"
+    # render json: {playlist: @playlist(include: :songs)}.to_json
   end
 
   # POST /playlists
@@ -21,7 +31,7 @@ class PlaylistsController < ApplicationController
     @playlist = Playlist.new(playlist_params)
 
     if @playlist.save
-      render json: @playlist, status: :created, #location: @playlist#
+      render json: @playlist, status: :created, location: @playlist
     else
       render json: @playlist.errors, status: :unprocessable_entity
     end
@@ -30,7 +40,7 @@ class PlaylistsController < ApplicationController
   # PATCH/PUT /playlists/1
   def update
     if @playlist.update(playlist_params)
-      render json: @playlist
+      render json: @playlist.to_json(include: :songs)
     else
       render json: @playlist.errors, status: :unprocessable_entity
     end
@@ -38,7 +48,8 @@ class PlaylistsController < ApplicationController
 
   # DELETE /playlists/1
   def destroy
-    @playlist.destroy
+    @destroyed = @playlist.destroy
+    render json: { status: 204, playlist: @destroyed }
   end
 
   private

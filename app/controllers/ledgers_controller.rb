@@ -1,16 +1,23 @@
 class LedgersController < ApplicationController
   before_action :set_ledger, only: [:show, :update, :destroy]
 
-  # GET /ledgers
+  # GET /ledgers - route to get the id of a ledger by ids of a playlist and a song
   def index
+    # localhost:3000/ledgers?playlist_id=1&song_id=1
+    puts "ledgers params=#{params}"
     @ledgers = Ledger.all
 
-    render json: @ledgers
+    ledger = Ledger.where("playlist_id = #{params[:playlist_id]} AND song_id = #{params[:song_id]}")[0].id;
+
+    puts "ledgerfound=#{ledger}"
+
+    render json: { ledger_id: ledger }
+    # render json: @ledgers.to_json(include: [:song, :playlist])
   end
 
   # GET /ledgers/1
   def show
-    render json: @ledger
+    render json: @ledger.to_json(include: [:song, :playlist])
   end
 
   # POST /ledgers
@@ -35,6 +42,7 @@ class LedgersController < ApplicationController
 
   # DELETE /ledgers/1
   def destroy
+    puts "ledger params=#{params}"
     @ledger.destroy
   end
 
