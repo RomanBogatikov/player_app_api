@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  post 'user_token' => 'user_token#create'
+  resources :users
   resources :ledgers
   resources :playlists
   resources :songs, only: [:index, :show]

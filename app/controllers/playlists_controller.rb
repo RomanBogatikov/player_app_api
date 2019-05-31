@@ -19,19 +19,20 @@ class PlaylistsController < ApplicationController
 
     puts "params=#{params[:id]}"
     ledger = Ledger.where("playlist_id = #{params[:id]} AND song_id = 1");
-    playlist_this = { playlist: @playlist }.to_json
-    puts "playlist_this=#{playlist_this}"
+    # playlist_this = { playlist: @playlist }.to_json
+    # puts "playlist_this=#{playlist_this}"
 
     puts "ledger=#{ledger[0].id}"
-    # render json: {playlist: @playlist(include: :songs)}.to_json
+    render json: @playlist.to_json(include: :songs)
   end
 
   # POST /playlists
   def create
+    puts "params=#{params}"
     @playlist = Playlist.new(playlist_params)
 
     if @playlist.save
-      render json: @playlist, status: :created, location: @playlist
+      render json: @playlist, status: :created
     else
       render json: @playlist.errors, status: :unprocessable_entity
     end
@@ -60,6 +61,6 @@ class PlaylistsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def playlist_params
-      params.require(:playlist).permit(:title)
+      params.require(:playlist).permit(:title, :user_id)
     end
 end
